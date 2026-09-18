@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Fallback Tracker — Dorizz Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --border-subtle: #E2E8F0;
+      --border-hover: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --text-light: #94A3B8;
+      --accent-primary: #0F172A;
+      --accent-red: #E11D48;
+      --accent-red-bg: #FFE4E6;
+      --accent-green: #059669;
+      --accent-green-bg: #D1FAE5;
+      --accent-blue: #2563EB;
+      --accent-blue-bg: #DBEAFE;
+      --accent-amber: #D97706;
+      --accent-amber-bg: #FEF3C7;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding: 24px 16px 64px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      width: fit-content;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-red);
+    }
+
+    h1 {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    /* Mode Switcher Tabs */
+    .input-mode-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+
+    .mode-tab-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-tab-btn.active {
+      background: #FFFFFF;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Card Panels */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .dropzone-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .dropzone-box {
+      border: 2px dashed var(--border-hover);
+      border-radius: 10px;
+      padding: 24px 16px;
+      text-align: center;
+      background: #FAFAFC;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .dropzone-box:hover, .dropzone-box.dragover {
+      border-color: var(--text-main);
+      background: #F1F5F9;
+    }
+
+    .dropzone-box input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .dropzone-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .dropzone-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .dropzone-status {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-green);
+      display: none;
+    }
+
+    .dropzone-status.active {
+      display: block;
+    }
+
+    /* Textarea Paste Grid */
+    .paste-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .paste-box label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .paste-box textarea {
+      width: 100%;
+      height: 140px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: #FAFAFC;
+      resize: vertical;
+      color: var(--text-main);
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .paste-box textarea:focus {
+      border-color: var(--text-main);
+      background: #FFFFFF;
+    }
+
+    .btn-action-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+    .btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: #FFFFFF;
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: #F1F5F9;
+    }
+
+    /* Tutorial Banner */
+    .tutorial-callout {
+      background: #F8FAFC;
+      border-left: 3px solid var(--accent-blue);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tutorial-link {
+      color: var(--accent-blue);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Summary Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-card.active-filter {
+      border-color: var(--accent-primary);
+      ring: 2px solid var(--accent-primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Results Header & Tabs */
+    .results-section {
+      display: none;
+    }
+
+    .results-section.show {
+      display: block;
+    }
+
+    .results-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-pill {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      background: #FFFFFF;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-pill:hover {
+      background: #F8FAFC;
+    }
+
+    .tab-pill.active {
+      background: var(--text-main);
+      color: #FFFFFF;
+      border-color: var(--text-main);
+    }
+
+    .tab-pill .count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: rgba(0,0,0,0.06);
+    }
+
+    .tab-pill.active .count {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 220px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--text-main);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* List Display */
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .user-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: border 0.15s, transform 0.1s;
+    }
+
+    .user-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .username {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .username:hover {
+      text-decoration: underline;
+    }
+
+    .user-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+      background: #FFFFFF;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: #F1F5F9;
+      color: var(--text-main);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-muted);
+      font-size: 14px;
+      grid-column: 1 / -1;
+      background: #FFFFFF;
+      border-radius: var(--radius);
+      border: 1px dashed var(--border-subtle);
+    }
+
+    /* Modal Tutorial */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 540px;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      position: relative;
+    }
+
+    .modal-card h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .modal-card ol {
+      padding-left: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-card ol li strong {
+      color: var(--text-main);
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-main);
+      color: #FFFFFF;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="brand-badge">
+      <span class="brand-dot"></span>
+      Dorizz Privacy Tools
+    </div>
+    <h1>Instagram Fallback & Unfollowers Tracker</h1>
+    <p class="subtitle">
+      Cek siapa saja yang tidak follow balik (fallback) akun Instagram kamu. Aman 100% diproses di browser tanpa simpan password atau risiko checkpoint akun.
+    </p>
+  </header>
+
+  <!-- Mode Tab -->
+  <div class="input-mode-tabs">
+    <button class="mode-tab-btn active" onclick="switchInputMode('upload')">📁 Upload File JSON (Resmi)</button>
+    <button class="mode-tab-btn" onclick="switchInputMode('paste')">✍️ Manual Copy-Paste</button>
+  </div>
+
+  <!-- Panel Upload File -->
+  <div class="card" id="upload-panel">
+    <div class="dropzone-grid">
+      <!-- Followers Box -->
+      <div class="dropzone-box" id="followers-dropzone">
+        <input type="file" id="followers-file" accept=".json,.html,.zip" onchange="handleFileSelect(event, 'followers')" />
+        <div class="dropzone-icon">👥</div>
+        <div class="dropzone-title">File Followers (Pengikut)</div>
+        <div class="dropzone-desc">Pilih <code>followers_1.json</code> atau drag ke sini</div>
+        <div class="dropzone-status" id="followers-status">✓ 0 followers dimuat</div>
+      </div>
+
+      <!-- Following Box -->
+      <div class="dropzone-box" id="following-dropzone">
+        <input type="file" id="following-file" accept=".json,.html" onchange="handleFileSelect(event, 'following')" />
+        <div class="dropzone-icon">👤</div>
+        <div class="dropzone-title">File Following (Mengikuti)</div>
+        <div class="dropzone-desc">Pilih <code>following.json</code> atau drag ke sini</div>
+        <div class="dropzone-status" id="following-status">✓ 0 following dimuat</div>
+      </div>
+    </div>
+
+    <div class="btn-action-row">
+      <button class="btn-primary" onclick="processData()">
+        ⚡ Analisis Siapa yang Gak Follback
+      </button>
+      <button class="btn-secondary" onclick="loadSampleData()">
+        🧪 Coba Demo Data Sample
+      </button>
+    </div>
+
+    <div class="tutorial-callout">
+      <span>💡 Belum punya file JSON dari Instagram? Proses unduh resminya hanya butuh 1 menit dari aplikasi IG.</span>
+      <a class="tutorial-link" onclick="openTutorial()">Lihat Cara Unduh Data IG →</a>
+    </div>
+  </div>
+
+  <!-- Panel Paste Manual -->
+  <div class="card" id="paste-panel" style="display: none;">
+    <div class="paste-grid">
+      <div class="paste-box">
+        <label>Daftar Followers (1 baris per username):</label>
+        <textarea id="paste-followers" placeholder="user_a&#10;user_b&#10;@user_c"></textarea>
+      </div>
+      <div class="paste-box">
+        <label>Daftar Following (1 baris per username):</label>
+        <textarea id="paste-following" placeholder="user_a&#10;user_x&#10;@user_y"></textarea>
+      </div>
+    </div>
+
+    <div class="btn-action-row">
+      <button class="btn-primary" onclick="processPasteData()">
+        ⚡ Bandingkan Sekarang
+      </button>
+      <button class="btn-secondary" onclick="clearPaste()">
+        Bersihkan
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-section" id="results-section">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card active-filter" onclick="setFilter('not_following_back')">
+        <div class="stat-label">
+          <span>Gak Follback Kamu</span>
+          <span class="stat-badge" style="background: var(--accent-red);"></span>
+        </div>
+        <div class="stat-value" id="count-unfollowers" style="color: var(--accent-red);">0</div>
+      </div>
+
+      <div class="stat-card" onclick="setFilter('mutual')">
+        <div class="stat-label">
+          <span>Saling Follow</span>
+          <span class="stat-badge" style="background: var(--accent-green);"></span>
+        </div>
+        <div class="stat-value" id="count-mutual" style="color: var(--accent-green);">0</div>
+      </div>
+
+      <div class="stat-card" onclick="setFilter('fans')">
+        <div class="stat-label">
+          <span>Fans (Kamu Belum Follback)</span>
+          <span class="stat-badge" style="background: var(--accent-amber);"></span>
+        </div>
+        <div class="stat-value" id="count-fans" style="color: var(--accent-amber);">0</div>
+      </div>
+
+      <div class="stat-card" onclick="setFilter('all_following')">
+        <div class="stat-label">
+          <span>Total Following</span>
+          <span class="stat-badge" style="background: var(--accent-blue);"></span>
+        </div>
+        <div class="stat-value" id="count-following">0</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="results-toolbar">
+      <div class="filter-tabs">
+        <button class="tab-pill active" id="tab-not_following_back" onclick="setFilter('not_following_back')">
+          🚫 Gak Follback <span class="count" id="pill-count-unfollowers">0</span>
+        </button>
+        <button class="tab-pill" id="tab-mutual" onclick="setFilter('mutual')">
+          🤝 Mutual <span class="count" id="pill-count-mutual">0</span>
+        </button>
+        <button class="tab-pill" id="tab-fans" onclick="setFilter('fans')">
+          ⭐ Fans <span class="count" id="pill-count-fans">0</span>
+        </button>
+        <button class="tab-pill" id="tab-all_following" onclick="setFilter('all_following')">
+          📋 Semua Following <span class="count" id="pill-count-following">0</span>
+        </button>
+      </div>
+
+      <div class="btn-action-row" style="margin-left: auto;">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="search-box" placeholder="Cari username..." oninput="handleSearch()" />
+        </div>
+        <button class="btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="copyCurrentList()">
+          📋 Salin Semua
+        </button>
+        <button class="btn-secondary" style="padding: 8px 12px; font-size: 12px;" onclick="exportCSV()">
+          📥 Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- User Cards Grid -->
+    <div class="users-grid" id="users-grid">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Modal Panduan -->
+<div class="modal-overlay" id="tutorial-modal">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeTutorial()">✕</button>
+    <h3>Cara Download Data Instagram (Format JSON Resmi)</h3>
+    <ol>
+      <li>Buka aplikasi Instagram di HP kamu, masuk ke <strong>Profil</strong> lalu tap menu <strong>Garisa Tiga (☰)</strong> di pojok kanan atas.</li>
+      <li>Pilih <strong>Pusat Akun (Accounts Center)</strong> → tap <strong>Informasi dan Izin Anda</strong>.</li>
+      <li>Pilih <strong>Unduh Informasi Anda (Download your information)</strong>.</li>
+      <li>Tap <strong>Unduh atau transfer informasi</strong> → pilih akun Instagram kamu.</li>
+      <li>Pilih <strong>Beberapa informasi Anda (Some of your information)</strong>, lalu scroll dan centang <strong>Pengikut dan Mengikuti (Followers and Following)</strong>.</li>
+      <li>Di pengaturan unduhan:
+        <br>• Rentang Tanggal: <strong>Sepanjang waktu (All time)</strong>
+        <br>• Format: <strong>JSON</strong> (wajib pilih JSON, jangan HTML).
+      </li>
+      <li>Tap <strong>Buat File</strong>. Dalam hitungan menit, Meta akan mengirimkan link download ZIP.</li>
+      <li>Buka ZIP tersebut, temukan folder <code>followers_and_following</code>, lalu upload file <code>followers_1.json</code> dan <code>following.json</code> ke dashboard ini!</li>
+    </ol>
+    <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="closeTutorial()">
+      Saya Mengerti
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast-msg">Teks berhasil disalin!</div>
+
+<script>
+  let followersList = [];
+  let followingList = [];
+  let currentFilter = 'not_following_back';
+  let filteredData = [];
+
+  function switchInputMode(mode) {
+    document.querySelectorAll('.mode-tab-btn').forEach(btn => btn.classList.remove('active'));
+    if (mode === 'upload') {
+      document.querySelectorAll('.mode-tab-btn')[0].classList.add('active');
+      document.getElementById('upload-panel').style.display = 'block';
+      document.getElementById('paste-panel').style.display = 'none';
+    } else {
+      document.querySelectorAll('.mode-tab-btn')[1].classList.add('active');
+      document.getElementById('upload-panel').style.display = 'none';
+      document.getElementById('paste-panel').style.display = 'block';
+    }
+  }
+
+  function openTutorial() {
+    document.getElementById('tutorial-modal').classList.add('active');
+  }
+
+  function closeTutorial() {
+    document.getElementById('tutorial-modal').classList.remove('active');
+  }
+
+  function showToast(text) {
+    const t = document.getElementById('toast-msg');
+    t.textContent = text;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // Parse Instagram JSON or text
+  function extractUsernamesFromJSON(jsonObj) {
+    const list = new Set();
+    
+    // Check if format is raw array (followers_1.json often is)
+    if (Array.isArray(jsonObj)) {
+      jsonObj.forEach(item => {
+        if (item.string_list_data) {
+          item.string_list_data.forEach(d => {
+            if (d.value) list.add(d.value.toLowerCase().trim());
+          });
+        }
+      });
+    } else if (typeof jsonObj === 'object' && jsonObj !== null) {
+      // following.json format: { relationships_following: [ { title: "", string_list_data: [...] } ] }
+      if (jsonObj.relationships_following && Array.isArray(jsonObj.relationships_following)) {
+        jsonObj.relationships_following.forEach(item => {
+          if (item.string_list_data) {
+            item.string_list_data.forEach(d => {
+              if (d.value) list.add(d.value.toLowerCase().trim());
+            });
+          }
+        });
+      } else {
+        // Generic recursive scan for string_list_data or value
+        function scan(obj) {
+          if (!obj) return;
+          if (Array.isArray(obj)) {
+            obj.forEach(scan);
+          } else if (typeof obj === 'object') {
+            if (obj.value && typeof obj.value === 'string' && obj.href && obj.href.includes('instagram.com')) {
+              list.add(obj.value.toLowerCase().trim());
+            }
+            Object.values(obj).forEach(scan);
+          }
+        }
+        scan(jsonObj);
+      }
+    }
+    return Array.from(list);
+  }
+
+  function handleFileSelect(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const text = e.target.result;
+        const parsed = JSON.parse(text);
+        const users = extractUsernamesFromJSON(parsed);
+        
+        if (type === 'followers') {
+          followersList = users;
+          const st = document.getElementById('followers-status');
+          st.textContent = `✓ ${users.length.toLocaleString('id-ID')} followers terdeteksi`;
+          st.classList.add('active');
+        } else {
+          followingList = users;
+          const st = document.getElementById('following-status');
+          st.textContent = `✓ ${users.length.toLocaleString('id-ID')} following terdeteksi`;
+          st.classList.add('active');
+        }
+        showToast(`File ${type} berhasil dimuat!`);
+      } catch (err) {
+        alert('Gagal membaca file JSON. Pastikan file berformat .json resmi dari Instagram.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function cleanUsernameList(rawText) {
+    return rawText
+      .split(/[\n,]+/)
+      .map(u => u.replace(/^@/, '').trim().toLowerCase())
+      .filter(u => u.length > 0 && !u.includes(' '));
+  }
+
+  function processPasteData() {
+    const rawFollowers = document.getElementById('paste-followers').value;
+    const rawFollowing = document.getElementById('paste-following').value;
+
+    followersList = cleanUsernameList(rawFollowers);
+    followingList = cleanUsernameList(rawFollowing);
+
+    if (followingList.length === 0 && followersList.length === 0) {
+      alert('Silakan masukkan daftar followers atau following terlebih dahulu.');
+      return;
+    }
+
+    renderDashboard();
+  }
+
+  function clearPaste() {
+    document.getElementById('paste-followers').value = '';
+    document.getElementById('paste-following').value = '';
+  }
+
+  function loadSampleData() {
+    followersList = ['azzimi_', 'coach_syarif', 'dorizzstore', 'andi_pratama', 'budi_santoso', 'citra_ayu', 'dimas_digital', 'eka_saputra'];
+    followingList = ['azzimi_', 'coach_syarif', 'dorizzstore', 'andi_pratama', 'seleb_a', 'influencer_b', 'toko_sepatu_id', 'crypto_whale', 'random_guy'];
+    
+    document.getElementById('followers-status').textContent = `✓ 8 followers (Sample)`;
+    document.getElementById('followers-status').classList.add('active');
+    document.getElementById('following-status').textContent = `✓ 9 following (Sample)`;
+    document.getElementById('following-status').classList.add('active');
+    
+    renderDashboard();
+    showToast('Demo data berhasil dimuat!');
+  }
+
+  function processData() {
+    if (followingList.length === 0) {
+      alert('Silakan upload file following.json terlebih dahulu!');
+      return;
+    }
+    renderDashboard();
+  }
+
+  function renderDashboard() {
+    const followersSet = new Set(followersList);
+    const followingSet = new Set(followingList);
+
+    // Categories
+    const notFollowingBack = followingList.filter(u => !followersSet.has(u));
+    const mutual = followingList.filter(u => followersSet.has(u));
+    const fans = followersList.filter(u => !followingSet.has(u));
+
+    // Update Counts
+    document.getElementById('count-unfollowers').textContent = notFollowingBack.length.toLocaleString('id-ID');
+    document.getElementById('count-mutual').textContent = mutual.length.toLocaleString('id-ID');
+    document.getElementById('count-fans').textContent = fans.length.toLocaleString('id-ID');
+    document.getElementById('count-following').textContent = followingList.length.toLocaleString('id-ID');
+
+    document.getElementById('pill-count-unfollowers').textContent = notFollowingBack.length;
+    document.getElementById('pill-count-mutual').textContent = mutual.length;
+    document.getElementById('pill-count-fans').textContent = fans.length;
+    document.getElementById('pill-count-following').textContent = followingList.length;
+
+    // Show Results Section
+    document.getElementById('results-section').classList.add('show');
+    setFilter(currentFilter);
+    document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function setFilter(filterType) {
+    currentFilter = filterType;
+    
+    // Update active tab buttons
+    document.querySelectorAll('.tab-pill').forEach(btn => btn.classList.remove('active'));
+    const activeTab = document.getElementById(`tab-${filterType}`);
+    if (activeTab) activeTab.classList.add('active');
+
+    const followersSet = new Set(followersList);
+    const followingSet = new Set(followingList);
+
+    if (filterType === 'not_following_back') {
+      filteredData = followingList.filter(u => !followersSet.has(u));
+    } else if (filterType === 'mutual') {
+      filteredData = followingList.filter(u => followersSet.has(u));
+    } else if (filterType === 'fans') {
+      filteredData = followersList.filter(u => !followingSet.has(u));
+    } else {
+      filteredData = [...followingList];
+    }
+
+    handleSearch();
+  }
+
+  function handleSearch() {
+    const q = document.getElementById('search-box').value.toLowerCase().trim();
+    const finalData = q ? filteredData.filter(u => u.includes(q)) : filteredData;
+    renderUserGrid(finalData);
+  }
+
+  function renderUserGrid(users) {
+    const grid = document.getElementById('users-grid');
+    grid.innerHTML = '';
+
+    if (users.length === 0) {
+      grid.innerHTML = `<div class="empty-state">Tidak ada akun yang ditemukan pada kategori ini.</div>`;
+      return;
+    }
+
+    let tagText = 'Tidak Follback';
+    let tagColor = 'var(--accent-red)';
+    if (currentFilter === 'mutual') {
+      tagText = 'Saling Follow';
+      tagColor = 'var(--accent-green)';
+    } else if (currentFilter === 'fans') {
+      tagText = 'Fans (Follow Kamu)';
+      tagColor = 'var(--accent-amber)';
+    } else if (currentFilter === 'all_following') {
+      tagText = 'Following';
+      tagColor = 'var(--accent-blue)';
+    }
+
+    users.forEach(username => {
+      const card = document.createElement('div');
+      card.className = 'user-card';
+      card.innerHTML = `
+        <div class="user-meta">
+          <a href="https://instagram.com/${username}" target="_blank" rel="noopener noreferrer" class="username">
+            @${username}
+          </a>
+          <span class="user-tag" style="color: ${tagColor};">${tagText}</span>
+        </div>
+        <div class="user-actions">
+          <button class="icon-btn" title="Salin Username" onclick="copyUsername('${username}')">📋</button>
+          <a href="https://instagram.com/${username}" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Buka Profil IG">↗</a>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function copyUsername(u) {
+    navigator.clipboard.writeText(u);
+    showToast(`@${u} disalin ke clipboard!`);
+  }
+
+  function copyCurrentList() {
+    if (filteredData.length === 0) return;
+    const text = filteredData.join('\n');
+    navigator.clipboard.writeText(text);
+    showToast(`${filteredData.length} username berhasil disalin!`);
+  }
+
+  function exportCSV() {
+    if (filteredData.length === 0) {
+      alert('Tidak ada data untuk diexport.');
+      return;
+    }
+    const csvContent = "data:text/csv;charset=utf-8,Username,Kategori,Link\n" + 
+      filteredData.map(u => `${u},${currentFilter},https://instagram.com/${u}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `instagram_${currentFilter}_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+</script>
+
+</body>
+</html>
